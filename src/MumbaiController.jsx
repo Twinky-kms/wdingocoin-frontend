@@ -356,16 +356,15 @@ function OnboardingButton(props) {
   const [chainId, setChainId] = React.useState(null);
   const onboarding = React.useRef();
 
-  React.useEffect(() => {
-    async function getChainId() {
+  React.useEffect(() => {    
+    const checkChainId = setInterval(async() => {
       if (window.ethereum) {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         setChainId(chainId);
         console.log(chainId)
-      }
-    }
-    getChainId();
-  }, []);
+      }  }, 5*1000);
+    return () => clearInterval(checkChainId);
+}, []);
 
   React.useEffect(() => {
     async function checkNetwork() {
