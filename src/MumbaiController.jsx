@@ -384,12 +384,11 @@ function OnboardingButton(props) {
     if (chainId) checkNetwork();
   }, [chainId]);
 
-  return (
-    <div>
-      {chainId ? `Connected to chain with ID ${chainId}` : 'Not connected to MetaMask'}
-    </div>
-  );
-}
+  // return (
+  //   <div>
+  //     {chainId ? `Connected to chain with ID ${chainId}` : 'Not connected to MetaMask'}
+  //   </div>
+  // );
 
 React.useEffect(() => {
   if (!onboarding.current) {
