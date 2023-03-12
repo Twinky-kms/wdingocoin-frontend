@@ -349,73 +349,12 @@ const CONTRACT_ABI = [
 
 
 function OnboardingButton(props) {
-  const [isMetaMaskLocked, setIsMetaMaskLocked] = React.useState(false);
-
-  React.useEffect(() => {
-    async function checkMetaMaskLocked() {
-      if (window.ethereum) {
-        try {
-          await window.ethereum.request({ method: "eth_accounts" });
-          setIsMetaMaskLocked(false);
-        } catch (err) {
-          setIsMetaMaskLocked(true);
-        }
-      }
-    }
-
-    checkMetaMaskLocked();
-  }, []);
-
-  async function openMetaMask() {
-    try {
-      await window.ethereum.request({ method: "eth_requestAccounts" });
-      setIsMetaMaskLocked(false);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   const [buttonText, setButtonText] = React.useState(
     "Connect MetaMask wallet to convert"
   );
   const [account, setAccount] = React.useState(null);
   const [chainId, setChainId] = React.useState(null);
   const onboarding = React.useRef();
-
-  React.useEffect(() => {
-    async function getChainId() {
-      if (window.ethereum) {
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        setChainId(chainId);
-        console.log(chainId)
-      }
-    }
-    getChainId();
-  }, []);
-
-  React.useEffect(() => {
-    async function checkNetwork() {
-      if (chainId !== '0x13881') { // Mumbai Matic Testnet network ID
-        if (window.confirm('Please switch to the Mumbai Matic Testnet network to use this app.')) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: '0x13881' }],
-            });
-          } catch (error) {
-            console.error(error);
-          }
-        }
-      }
-    }
-    if (chainId) checkNetwork();
-  }, [chainId]);
-
-  // return (
-  //   <div>
-  //     {chainId ? `Connected to chain with ID ${chainId}` : 'Not connected to MetaMask'}
-  //   </div>
-  // );
 
   React.useEffect(() => {
     if (!onboarding.current) {
@@ -429,14 +368,20 @@ function OnboardingButton(props) {
     }
   }, [account]);
 
-  if (isMetaMaskLocked) {
-    return (
-      <button className="button button3" onClick={openMetaMask}>
-        Unlock MetaMask to continue.
-      </button>
-    );
-  }
-  const onClick = () => {
+  const onClick = async () => {
+    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    if (chainId !== '0x13881') { // Mumbai Matic Testnet network ID
+      if (window.confirm('Please switch to the Mumbai Matic Testnet network to use this app.')) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x13881' }],
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
       window.ethereum
         .request({ method: "eth_requestAccounts" })
