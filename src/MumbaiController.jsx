@@ -347,7 +347,34 @@ const CONTRACT_ABI = [
   },
 ];
 
+
 function OnboardingButton(props) {
+  const [isMetaMaskLocked, setIsMetaMaskLocked] = useState(false);
+
+  React.useEffect(() => {
+    async function checkMetaMaskLocked() {
+      if (window.ethereum) {
+        try {
+          await window.ethereum.request({ method: "eth_accounts" });
+          setIsMetaMaskLocked(false);
+        } catch (err) {
+          setIsMetaMaskLocked(true);
+        }
+      }
+    }
+
+    checkMetaMaskLocked();
+  }, []);
+
+  async function openMetaMask() {
+    try {
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+      setIsMetaMaskLocked(false);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   const [buttonText, setButtonText] = React.useState(
     "Connect MetaMask wallet to convert"
   );
@@ -390,44 +417,51 @@ function OnboardingButton(props) {
   //   </div>
   // );
 
-React.useEffect(() => {
-  if (!onboarding.current) {
-    onboarding.current = new MetaMaskOnboarding();
-  }
-}, []);
+  React.useEffect(() => {
+    if (!onboarding.current) {
+      onboarding.current = new MetaMaskOnboarding();
+    }
+  }, []);
 
-React.useEffect(() => {
-  if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
-    setButtonText("Click here to install MetaMask!");
-  }
-}, [account]);
+  React.useEffect(() => {
+    if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
+      setButtonText("Click here to install MetaMask!");
+    }
+  }, [account]);
 
-const onClick = () => {
-  if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-    window.ethereum
-      .request({ method: "eth_requestAccounts" })
-      .then((accounts) => {
-        const acc = Web3.utils.toChecksumAddress(accounts[0]);
-        setAccount(acc);
-        setButtonText(acc);
-        if (props.onAccountChange) {
-          props.onAccountChange(acc);
-        }
-      });
-  } else {
-    onboarding.current.startOnboarding();
+  if (isMetaMaskLocked) {
+    return (
+      <button className="button button3" onClick={openMetaMask}>
+        Unlock MetaMask to continue.
+      </button>
+    );
   }
-};
+  const onClick = () => {
+    if (MetaMaskOnboarding.isMetaMaskInstalled()) {
+      window.ethereum
+        .request({ method: "eth_requestAccounts" })
+        .then((accounts) => {
+          const acc = Web3.utils.toChecksumAddress(accounts[0]);
+          setAccount(acc);
+          setButtonText(acc);
+          if (props.onAccountChange) {
+            props.onAccountChange(acc);
+          }
+        });
+    } else {
+      onboarding.current.startOnboarding();
+    }
+  };
 
-return (
-  <button
-    className="button button3"
-    disabled={account !== null ? true : false}
-    onClick={onClick}
-  >
-    {buttonText}
-  </button>
-);
+  return (
+    <button
+      className="button button3"
+      disabled={account !== null ? true : false}
+      onClick={onClick}
+    >
+      {buttonText}
+    </button>
+  );
 }
 
 function MumbaiController() {
