@@ -352,7 +352,19 @@ function OnboardingButton(props) {
     "Connect MetaMask wallet to convert"
   );
   const [account, setAccount] = React.useState(null);
+  const [chainId, setChainId] = React.useState(null);
   const onboarding = React.useRef();
+
+  React.useEffect(() => {
+    async function getChainId() {
+      if (window.ethereum) {
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        setChainId(chainId);
+        console.log(chainId)
+      }
+    }
+    getChainId();
+  }, []);
 
   React.useEffect(() => {
     if (!onboarding.current) {
@@ -526,6 +538,12 @@ function MumbaiController() {
       }
     })();
   });
+
+  //check the users chainid and if it is not 80001, then prompt them to switch to 
+  
+
+
+
 
   React.useEffect(() => {
     (async () => {
