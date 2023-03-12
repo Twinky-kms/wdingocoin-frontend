@@ -211,12 +211,12 @@ hr {
     display: flex;
     span {
       color: $secondary;
-      font-weight: 700% !important;
+      font-weight: 700 !important;
       margin-right: 0.5rem;
     }
     span.navbar-brand-subtitle {
       color: $light;
-      font-weight: 350% !important;
+      font-weight: 350 !important;
     }
   }
 
@@ -931,13 +931,13 @@ hr {
 }
 
 .timeline h1 {
-  font-weight: 300%;
+  font-weight: 300;
   font-size: 1.4em;
 }
 
 .timeline h2,
 .timeline h3 {
-  font-weight: 600%;
+  font-weight: 600;
   font-size: 1rem;
   margin-bottom: 10px;
 }
@@ -972,7 +972,7 @@ hr {
   content: attr(data-date);
 
   text-align: right;
-  font-weight: 900%;
+  font-weight: 900;
   font-size: 0.9em;
   min-width: 120px;
 }
@@ -1223,7 +1223,7 @@ hr {
   .card-title {
     font-size: 1rem !important;
     color: #000000;
-    font-weight: 400% !important;
+    font-weight: 400 !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1242,11 +1242,11 @@ hr {
     .card-price {
       color: $primary;
       font-size: 1.5rem;
-      font-weight: 600% !important;
+      font-weight: 600 !important;
     }
     .card-price-subtitle {
       font-size: 0.75rem;
-      font-weight: 300%;
+      font-weight: 300;
     }
   }
   .card-sub-body {
