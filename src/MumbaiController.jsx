@@ -356,11 +356,11 @@ function OnboardingButton(props) {
   const onboarding = React.useRef();
 
   React.useEffect(() => {
-    const checkChainId = setInterval(async() => {
+    async function checkNetwork() {
       if (window.ethereum) {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         if (chainId !== '0x13881') { // Mumbai Matic Testnet network ID
-          if (window.confirm('Please switch to the Mumbai Matic Testnet network to use the wrapper.')) {
+          if (window.confirm('WARNING: Metamask is not set to Matic Mumbai Testnet network!')) {
             try {
               await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
@@ -372,7 +372,11 @@ function OnboardingButton(props) {
             }
           }
         }
-      }  }, 5*1000);
+      }
+    }
+    //check network in initial load and every 5 seconds after
+    checkNetwork();
+    const checkChainId = setInterval(async() => {checkNetwork()}, 5*1000);
     return () => clearInterval(checkChainId);
   }, []);
 
@@ -548,13 +552,7 @@ function MumbaiController() {
       }
     })();
   });
-
-  //check the users chainid and if it is not 80001, then prompt them to switch to 
-
-
-
-
-
+  
   React.useEffect(() => {
     (async () => {
       if (aliveNodes !== null && stats === null) {
