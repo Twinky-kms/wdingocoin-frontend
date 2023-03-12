@@ -366,7 +366,7 @@ function OnboardingButton(props) {
     getChainId();
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     async function checkNetwork() {
       if (chainId !== '0x13881') { // Mumbai Matic Testnet network ID
         if (window.confirm('Please switch to the Mumbai Matic Testnet network to use this app.')) {
