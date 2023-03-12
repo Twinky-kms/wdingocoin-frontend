@@ -349,7 +349,7 @@ const CONTRACT_ABI = [
 
 
 function OnboardingButton(props) {
-  const [isMetaMaskLocked, setIsMetaMaskLocked] = useState(false);
+  const [isMetaMaskLocked, setIsMetaMaskLocked] = React.useState(false);
 
   React.useEffect(() => {
     async function checkMetaMaskLocked() {
