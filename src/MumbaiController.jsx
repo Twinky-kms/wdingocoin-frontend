@@ -366,6 +366,31 @@ function OnboardingButton(props) {
     getChainId();
   }, []);
 
+  useEffect(() => {
+    async function checkNetwork() {
+      if (chainId !== '0x13881') { // Mumbai Matic Testnet network ID
+        if (window.confirm('Please switch to the Mumbai Matic Testnet network to use this app.')) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: '0x13881' }],
+            });
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    }
+    if (chainId) checkNetwork();
+  }, [chainId]);
+
+  return (
+    <div>
+      {chainId ? `Connected to chain with ID ${chainId}` : 'Not connected to MetaMask'}
+    </div>
+  );
+  }
+
   React.useEffect(() => {
     if (!onboarding.current) {
       onboarding.current = new MetaMaskOnboarding();
