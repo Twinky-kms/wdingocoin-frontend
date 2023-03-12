@@ -629,6 +629,7 @@ function MumbaiController() {
   };
 
   const onMint = async (depositAddress) => {
+    checkNetwork();
     const mintTransactionInfos = Array(AUTHORITY_NODES.length).fill(undefined);
     await Promise.all(
       AUTHORITY_NODES.map((x, i) => {
