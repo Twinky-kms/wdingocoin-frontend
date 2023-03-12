@@ -353,37 +353,28 @@ function OnboardingButton(props) {
     "Connect MetaMask wallet to convert"
   );
   const [account, setAccount] = React.useState(null);
-  const [chainId, setChainId] = React.useState(null);
   const onboarding = React.useRef();
 
-  React.useEffect(() => {    
+  React.useEffect(() => {
     const checkChainId = setInterval(async() => {
       if (window.ethereum) {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        setChainId(chainId);
-        console.log(chainId)
-      }  }, 5*1000);
-    return () => clearInterval(checkChainId);
-}, []);
-
-  React.useEffect(() => {
-    async function checkNetwork() {
-      if (chainId !== '0x13881') { // Mumbai Matic Testnet network ID
-        if (window.confirm('Please switch to the Mumbai Matic Testnet network to use this app.')) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: '0x13881' }],
-            });
-            window.location.reload()
-          } catch (error) {
-            console.error(error);
+        if (chainId !== '0x13881') { // Mumbai Matic Testnet network ID
+          if (window.confirm('Please switch to the Mumbai Matic Testnet network to use the wrapper.')) {
+            try {
+              await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: '0x13881' }],
+              });
+              // window.location.reload()
+            } catch (error) {
+              console.error(error);
+            }
           }
         }
-      }
-    }
-    if (chainId) checkNetwork();
-  }, [chainId]);
+      }  }, 5*1000);
+    return () => clearInterval(checkChainId);
+  }, []);
 
   React.useEffect(() => {
     if (!onboarding.current) {
