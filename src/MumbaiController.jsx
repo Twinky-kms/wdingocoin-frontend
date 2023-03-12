@@ -376,13 +376,13 @@ function OnboardingButton(props) {
               method: 'wallet_switchEthereumChain',
               params: [{ chainId: '0x13881' }],
             });
+            window.location.reload()
           } catch (error) {
             console.error(error);
           }
         }
       }
     }
-    window.location.reload()
     if (chainId) checkNetwork();
   }, [chainId]);
 
