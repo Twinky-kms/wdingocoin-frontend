@@ -389,46 +389,46 @@ function OnboardingButton(props) {
       {chainId ? `Connected to chain with ID ${chainId}` : 'Not connected to MetaMask'}
     </div>
   );
+}
+
+React.useEffect(() => {
+  if (!onboarding.current) {
+    onboarding.current = new MetaMaskOnboarding();
   }
+}, []);
 
-  React.useEffect(() => {
-    if (!onboarding.current) {
-      onboarding.current = new MetaMaskOnboarding();
-    }
-  }, []);
+React.useEffect(() => {
+  if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
+    setButtonText("Click here to install MetaMask!");
+  }
+}, [account]);
 
-  React.useEffect(() => {
-    if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
-      setButtonText("Click here to install MetaMask!");
-    }
-  }, [account]);
+const onClick = () => {
+  if (MetaMaskOnboarding.isMetaMaskInstalled()) {
+    window.ethereum
+      .request({ method: "eth_requestAccounts" })
+      .then((accounts) => {
+        const acc = Web3.utils.toChecksumAddress(accounts[0]);
+        setAccount(acc);
+        setButtonText(acc);
+        if (props.onAccountChange) {
+          props.onAccountChange(acc);
+        }
+      });
+  } else {
+    onboarding.current.startOnboarding();
+  }
+};
 
-  const onClick = () => {
-    if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-      window.ethereum
-        .request({ method: "eth_requestAccounts" })
-        .then((accounts) => {
-          const acc = Web3.utils.toChecksumAddress(accounts[0]);
-          setAccount(acc);
-          setButtonText(acc);
-          if (props.onAccountChange) {
-            props.onAccountChange(acc);
-          }
-        });
-    } else {
-      onboarding.current.startOnboarding();
-    }
-  };
-
-  return (
-    <button
-      className="button button3"
-      disabled={account !== null ? true : false}
-      onClick={onClick}
-    >
-      {buttonText}
-    </button>
-  );
+return (
+  <button
+    className="button button3"
+    disabled={account !== null ? true : false}
+    onClick={onClick}
+  >
+    {buttonText}
+  </button>
+);
 }
 
 function MumbaiController() {
@@ -456,7 +456,7 @@ function MumbaiController() {
   const randAuthorityLink = () => {
     const node =
       AUTHORITY_NODES[
-        aliveNodes[Math.floor(Math.random() * aliveNodes.length)]
+      aliveNodes[Math.floor(Math.random() * aliveNodes.length)]
       ];
     return `https://${node.location}:${node.port}`;
   };
@@ -557,7 +557,7 @@ function MumbaiController() {
             .then(() => {
               alive.push(parseInt(i));
             })
-            .catch(() => {});
+            .catch(() => { });
         }
         setAliveNodes(alive);
       }
@@ -565,7 +565,7 @@ function MumbaiController() {
   });
 
   //check the users chainid and if it is not 80001, then prompt them to switch to 
-  
+
 
 
 
@@ -643,7 +643,7 @@ function MumbaiController() {
           .then((r) => {
             mintTransactionInfos[i] = r.data;
           })
-          .catch(() => {});
+          .catch(() => { });
       })
     );
     const availableMintTransactionInfos = mintTransactionInfos.filter(
@@ -760,7 +760,7 @@ function MumbaiController() {
             target="_blank"
             rel="noreferrer"
             href="https://dingocoin.org"
-            // href="https://pancakeswap.finance/swap?outputCurrency=0x9b208b117B2C4F76C1534B6f006b033220a681A4"
+          // href="https://pancakeswap.finance/swap?outputCurrency=0x9b208b117B2C4F76C1534B6f006b033220a681A4"
           >
             Buy wDingocoin (BSC)
           </a>
@@ -769,7 +769,7 @@ function MumbaiController() {
             target="_blank"
             rel="noreferrer"
             href="https://dingocoin.org"
-            // href="https://poocoin.app/tokens/0x9b208b117b2c4f76c1534b6f006b033220a681a4"
+          // href="https://poocoin.app/tokens/0x9b208b117b2c4f76c1534b6f006b033220a681a4"
           >
             wDingocoin (BSC) Price
           </a>
@@ -778,7 +778,7 @@ function MumbaiController() {
             target="_blank"
             rel="noreferrer"
             href="https://dingocoin.org"
-            // href={`https://bscscan.com/token/${CONTRACT_ADDRESS}`}
+          // href={`https://bscscan.com/token/${CONTRACT_ADDRESS}`}
           >
             wDingocoin (BSC) Contract
           </a>
@@ -794,7 +794,7 @@ function MumbaiController() {
           <OnboardingButton onAccountChange={onAccountChange} />
         </Container>
       </header>
-      <br /> <br />	
+      <br /> <br />
       {wallet && aliveNodes && (
         <div>
           <section className="section-b">
@@ -862,10 +862,10 @@ function MumbaiController() {
                           <td className="short-header">
                             {BigInt(x.mintedAmount) <
                               BigInt(x.depositedAmount) && (
-                              <button onClick={() => onMint(x.depositAddress)}>
-                                Mint balance
-                              </button>
-                            )}
+                                <button onClick={() => onMint(x.depositAddress)}>
+                                  Mint balance
+                                </button>
+                              )}
                           </td>
                         </tr>
                       );
@@ -982,10 +982,10 @@ function MumbaiController() {
                                   {x.status === null
                                     ? "Not submitted"
                                     : x.status === "SUBMITTED"
-                                    ? "Submitted"
-                                    : x.status === "APPROVED"
-                                    ? "Approved"
-                                    : "UNKNOWN"}
+                                      ? "Submitted"
+                                      : x.status === "APPROVED"
+                                        ? "Approved"
+                                        : "UNKNOWN"}
                                 </td>
                                 <td className="short-header">
                                   {x.status !== null ? null : (
@@ -1039,14 +1039,14 @@ function MumbaiController() {
         </h5>
         {aliveNodes !== null && (
           <p> <br />
-          <small>(Nodes not online? Our load protection system was probably triggered
-          by too many of your requests. Please try again in a few minutes.)</small>
+            <small>(Nodes not online? Our load protection system was probably triggered
+              by too many of your requests. Please try again in a few minutes.)</small>
           </p>
         )}
         {aliveNodes !== null && stats === null && (
           <div className="loader"></div>
         )}
-       <br />
+        <br />
         {stats && (
           <div>
             <table>
