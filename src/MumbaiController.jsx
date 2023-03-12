@@ -356,31 +356,6 @@ function OnboardingButton(props) {
   const onboarding = React.useRef();
 
   React.useEffect(() => {
-    async function checkNetwork() {
-      if (window.ethereum) {
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        if (chainId !== '0x13881') { // Mumbai Matic Testnet network ID
-          if (window.confirm('WARNING: Metamask is not set to Matic Mumbai Testnet network!')) {
-            try {
-              await window.ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x13881' }],
-              });
-              // window.location.reload()
-            } catch (error) {
-              console.error(error);
-            }
-          }
-        }
-      }
-    }
-    //check network in initial load and every 5 seconds after
-    checkNetwork();
-    const checkChainId = setInterval(async() => {checkNetwork()}, 5*1000);
-    return () => clearInterval(checkChainId);
-  }, []);
-
-  React.useEffect(() => {
     if (!onboarding.current) {
       onboarding.current = new MetaMaskOnboarding();
     }
@@ -439,6 +414,44 @@ function MumbaiController() {
       })
     ).json();
   }
+
+  const [askedToSwitchNetwork, setAskedToSwitchNetwork] = React.useState(false);
+  const [chainId, setChainId] = React.useState(null);
+  const [targetChainId, setTargetChainId] = React.useState("0x13881");
+
+  React.useEffect(() => {
+    window.ethereum.on("accountsChanged", (accounts) => {
+      window.location.reload();
+    });
+
+    window.ethereum.on("chainChanged", (chainId) => {
+      setChainId(chainId)
+      if(!askedToSwitchNetwork) {
+        window.location.reload();
+        setAskedToSwitchNetwork(false);
+      }
+    });
+
+    async function checkNetwork() {
+      if (window.ethereum) {
+        setChainId(await window.ethereum.request({ method: 'eth_chainId' }));
+        // if (chainId !== targetChainId) {
+        //   try {
+        //     await window.ethereum.request({
+        //       method: 'wallet_switchEthereumChain',
+        //       params: [{ chainId: targetChainId }],
+        //     });
+        //     setAskedToSwitchNetwork(true);
+        //   } catch (error) {
+        //     console.error(error);
+        //   }
+        // }
+      }
+    }
+    checkNetwork();
+    const checkChainId = setInterval(async () => { checkNetwork() }, 5 * 1000);
+    return () => clearInterval(checkChainId);
+  }, []);
 
   const [wallet, setWallet] = React.useState(null);
   const [aliveNodes, setAliveNodes] = React.useState(null);
@@ -552,7 +565,7 @@ function MumbaiController() {
       }
     })();
   });
-  
+
   React.useEffect(() => {
     (async () => {
       if (aliveNodes !== null && stats === null) {
@@ -617,6 +630,14 @@ function MumbaiController() {
   };
 
   const onMint = async (depositAddress) => {
+    if(chainId !== targetChainId) {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: targetChainId }],
+      });
+      alert("Please switch to the correct network.");
+      return;
+    }
     const mintTransactionInfos = Array(AUTHORITY_NODES.length).fill(undefined);
     await Promise.all(
       AUTHORITY_NODES.map((x, i) => {
