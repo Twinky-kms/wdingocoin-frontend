@@ -634,8 +634,7 @@ function MumbaiController() {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: targetChainId }],
       });
-      alert("Please switch to the correct network.");
-      return;
+      return alert("Please switch to the correct network.");
     }
     const mintTransactionInfos = Array(AUTHORITY_NODES.length).fill(undefined);
     await Promise.all(
