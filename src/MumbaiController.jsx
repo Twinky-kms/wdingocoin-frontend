@@ -37,12 +37,11 @@ function sha256(data) {
 }
 
 const isValidDingocoinAddress = (x) => {
-  return true;
   const raw = bs58.decode(x);
   if (raw.length !== 25) {
     return false;
   }
-  if (raw[0] !== 0x16 && raw[0] !== 0x1e) {
+  if (raw[0] !== 0x71 && raw[0] !== 0xc4) {
     return false;
   }
   const checksum = sha256(sha256(raw.slice(0, 21)));
