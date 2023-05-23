@@ -359,30 +359,6 @@ function OnboardingButton(props) {
   const onboarding = React.useRef();
 
   React.useEffect(() => {
-    async function checkNetwork() {
-      if (window.ethereum) {
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        if (chainId !== '0x38') { // bsc network ID
-          if (window.confirm('WARNING: Metamask is not set to the BSC network!')) {
-            try {
-              await window.ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x38' }],
-              });
-            } catch (error) {
-              console.error(error);
-            }
-          }
-        }
-      }
-    }
-    //check network in initial load and every 5 seconds after
-    checkNetwork();
-    const checkChainId = setInterval(async() => {checkNetwork()}, 5*1000);
-    return () => clearInterval(checkChainId);
-  }, []);
-
-  React.useEffect(() => {
     if (!onboarding.current) {
       onboarding.current = new MetaMaskOnboarding();
     }
@@ -442,12 +418,50 @@ function BscController() {
     ).json();
   }
 
+  const [askedToSwitchNetwork, setAskedToSwitchNetwork] = React.useState(false);
+  const [chainId, setChainId] = React.useState(null);
+  const [targetChainId, setTargetChainId] = React.useState("0x38");
+
+  React.useEffect(() => {
+    window.ethereum.on("accountsChanged", (accounts) => {
+      window.location.reload();
+    });
+
+    window.ethereum.on("chainChanged", (chainId) => {
+      setChainId(chainId)
+      if(!askedToSwitchNetwork) {
+        window.location.reload();
+        setAskedToSwitchNetwork(false);
+      }
+    });
+
+    async function checkNetwork() {
+      if (window.ethereum) {
+        setChainId(await window.ethereum.request({ method: 'eth_chainId' }));
+        // if (chainId !== targetChainId) {
+        //   try {
+        //     await window.ethereum.request({
+        //       method: 'wallet_switchEthereumChain',
+        //       params: [{ chainId: targetChainId }],
+        //     });
+        //     setAskedToSwitchNetwork(true);
+        //   } catch (error) {
+        //     console.error(error);
+        //   }
+        // }
+      }
+    }
+    checkNetwork();
+    const checkChainId = setInterval(async () => { checkNetwork() }, 5 * 1000);
+    return () => clearInterval(checkChainId);
+  }, []);
+
   const [wallet, setWallet] = React.useState(null);
   const [aliveNodes, setAliveNodes] = React.useState(null);
   const randAuthorityLink = () => {
     const node =
       AUTHORITY_NODES[
-        aliveNodes[Math.floor(Math.random() * aliveNodes.length)]
+      aliveNodes[Math.floor(Math.random() * aliveNodes.length)]
       ];
     return `https://${node.location}:${node.port}`;
   };
@@ -548,7 +562,7 @@ function BscController() {
             .then(() => {
               alive.push(parseInt(i));
             })
-            .catch(() => {});
+            .catch(() => { });
         }
         setAliveNodes(alive);
       }
@@ -619,6 +633,14 @@ function BscController() {
   };
 
   const onMint = async (depositAddress) => {
+    if(chainId !== targetChainId) {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: targetChainId }],
+      });
+      alert("Please switch to the correct network.");
+      return;
+    }
     const mintTransactionInfos = Array(AUTHORITY_NODES.length).fill(undefined);
     await Promise.all(
       AUTHORITY_NODES.map((x, i) => {
@@ -628,7 +650,7 @@ function BscController() {
           .then((r) => {
             mintTransactionInfos[i] = r.data;
           })
-          .catch(() => {});
+          .catch(() => { });
       })
     );
     const availableMintTransactionInfos = mintTransactionInfos.filter(
@@ -776,7 +798,7 @@ function BscController() {
           <OnboardingButton onAccountChange={onAccountChange} />
         </Container>
       </header>
-      <br /> <br />	
+      <br /> <br />
       {wallet && aliveNodes && (
         <div>
           <section className="section-b">
@@ -844,10 +866,10 @@ function BscController() {
                           <td className="short-header">
                             {BigInt(x.mintedAmount) <
                               BigInt(x.depositedAmount) && (
-                              <button onClick={() => onMint(x.depositAddress)}>
-                                Mint balance
-                              </button>
-                            )}
+                                <button onClick={() => onMint(x.depositAddress)}>
+                                  Mint balance
+                                </button>
+                              )}
                           </td>
                         </tr>
                       );
@@ -964,10 +986,10 @@ function BscController() {
                                   {x.status === null
                                     ? "Not submitted"
                                     : x.status === "SUBMITTED"
-                                    ? "Submitted"
-                                    : x.status === "APPROVED"
-                                    ? "Approved"
-                                    : "UNKNOWN"}
+                                      ? "Submitted"
+                                      : x.status === "APPROVED"
+                                        ? "Approved"
+                                        : "UNKNOWN"}
                                 </td>
                                 <td className="short-header">
                                   {x.status !== null ? null : (
@@ -1021,14 +1043,14 @@ function BscController() {
         </h5>
         {aliveNodes !== null && (
           <p> <br />
-          <small>(Nodes not online? Our load protection system was probably triggered
-          by too many of your requests. Please try again in a few minutes.)</small>
+            <small>(Nodes not online? Our load protection system was probably triggered
+              by too many of your requests. Please try again in a few minutes.)</small>
           </p>
         )}
         {aliveNodes !== null && stats === null && (
           <div className="loader"></div>
         )}
-       <br />
+        <br />
         {stats && (
           <div>
             <table>
