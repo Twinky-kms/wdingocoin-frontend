@@ -126,9 +126,7 @@ export default function App() {
                     title={
                       controller === null
                         ? "Select Wrapped Network"
-                        : controller === "bsc"
-                          ? "Binance Smart Chain (BSC)"
-                          : "Solana (SOL)"
+                        : controller
                     }
                     className="mb-2"
                   >
