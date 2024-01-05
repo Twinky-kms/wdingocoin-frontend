@@ -132,14 +132,31 @@ export default function App() {
                   >
                     <Dropdown.Item
                       onClick={() => {
-                        setController("bsc");
+                        setController("Binance Smart Chain (BSC)");
                       }}
                     >
                       Binance Smart Chain (BSC)
                     </Dropdown.Item>
                     <Dropdown.Item
                       onClick={() => {
-                        setController("sol");
+                        setController("Polygon (MATIC)");
+                      }}
+                    >
+                      Polygon (MATIC)
+                    </Dropdown.Item>
+                    {
+                      testnetEnabled ?
+                        <Dropdown.Item
+                          onClick={() => {
+                            setController("Mumbai TESTNET");
+                          }}
+                        >
+                          wtDingo (Mumbai)
+                        </Dropdown.Item>
+                        : null}
+                    <Dropdown.Item
+                      onClick={() => {
+                        setController("Solana (SOL)");
                       }}
                     >
                       Solana (SOL)
