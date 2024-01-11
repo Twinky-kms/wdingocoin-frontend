@@ -170,8 +170,10 @@ export default function App() {
           <section>
             <Container>
               <h5 className="mt-3 text-center">
-                {controller === "bsc" && <BscController />}
-                {controller === "sol" && <SolController />}
+                {controller === "Binance Smart Chain (BSC)" && <BscController />}
+                {controller === "Polygon (MATIC)" && <MaticController />}
+                {controller === "Mumbai TESTNET" && <MumbaiController />}
+                {controller === "Solana (SOL)" && <SolController />}
               </h5>
             </Container>
           </section>
@@ -181,10 +183,9 @@ export default function App() {
                 <b>© The Dingocoin Project 2021 - 2024</b>
               </span >
             </Row >
-        </section >
-      </div >
-      )
-}
+          </section >
+        </div >
+      )}
     </Router >
   );
 }
