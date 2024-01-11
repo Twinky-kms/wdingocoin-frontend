@@ -1,8 +1,8 @@
 import "./App.scss";
 import BscController from "./BscController";
 import SolController from "./SolController";
-import MumbaiController from "./MaticController";
-import MaticController from "./MumbaiController";
+import MumbaiController from "./MumbaiController";
+import MaticController from "./MaticController";
 import ReactGA from "react-ga";
 
 // Controls.
@@ -136,7 +136,7 @@ export default function App() {
                         setController("Binance Smart Chain (BSC)");
                       }}
                     >
-                      Binance Smart Chainfewfewfew (BSC)
+                      Binance Smart Chain (BSC)
                     </Dropdown.Item>
                     <Dropdown.Item
                       onClick={() => {
