@@ -40,6 +40,7 @@ export default function App() {
 
   {/* Maint Mode Toggle  'const maintenance' = -- true = on  | false = off */ }
   const maintenance = false;
+  const testnetEnabled = false;
   return (
     <Router>
       {maintenance ? (
