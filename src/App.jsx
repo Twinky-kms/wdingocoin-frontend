@@ -136,7 +136,7 @@ export default function App() {
                         setController("Binance Smart Chain (BSC)");
                       }}
                     >
-                      Binance Smart Chain (BSC)
+                      Binance Smart Chainfewfewfew (BSC)
                     </Dropdown.Item>
                     <Dropdown.Item
                       onClick={() => {
